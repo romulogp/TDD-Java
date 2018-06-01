@@ -9,7 +9,7 @@ import org.junit.Test;
  *
  * @author Rômulo Göelzer Portolann
  */
-public class CalculadoraTeste {
+public class CalculadoraTest {
 
     private Calculadora calc;
     
