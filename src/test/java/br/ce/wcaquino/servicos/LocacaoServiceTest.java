@@ -5,9 +5,11 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import static br.ce.wcaquino.matchers.Matchers.caiEm;
+import static br.ce.wcaquino.matchers.Matchers.caiNumaSegunda;
+import static br.ce.wcaquino.matchers.Matchers.ehHoje;
+import static br.ce.wcaquino.matchers.Matchers.ehHojeComDiferencaDeDias;
 import br.ce.wcaquino.utils.DataUtils;
-import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
-import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,10 +54,10 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveAlugarFilme() throws Exception {
-        
+
         // Realiza o teste dinamicamente.
         Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-        
+
         //cenario
         Usuario usuario = new Usuario("Usuario 1");
         Filme filme = new Filme("Filme 1", 1, 5.0);
@@ -65,8 +67,8 @@ public class LocacaoServiceTest {
 
         //verificacao
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+        error.checkThat(locacao.getDataLocacao(), ehHoje());
+        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDeDias(1));
     }
 
     @Test(expected = FilmeSemEstoqueException.class)
@@ -108,10 +110,10 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
-        
-        // Realiza o teste dinamicamente.
+
+        // Realiza o teste dinamicamente, ou seja, se o teste deve ou não ser ignorado
         Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-        
+
         // cenario
         Usuario usuario = new Usuario("Usuario1");
         List<Filme> filme = Arrays.asList(new Filme("Filme1", 2, 4.0));
@@ -120,8 +122,8 @@ public class LocacaoServiceTest {
         Locacao locacao = service.alugarFilme(usuario, filme);
 
         // verificacao
-        boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
-        Assert.assertTrue(ehSegunda);
+        assertThat(locacao.getDataRetorno(), caiEm(Calendar.MONDAY));
+        assertThat(locacao.getDataRetorno(), caiNumaSegunda());
     }
 
 }
