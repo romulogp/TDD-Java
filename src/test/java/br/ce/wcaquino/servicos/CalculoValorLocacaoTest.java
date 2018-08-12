@@ -1,5 +1,7 @@
 package br.ce.wcaquino.servicos;
 
+import static br.ce.wcaquino.builder.FilmeBuilder.umFilme;
+import static br.ce.wcaquino.builder.UsuarioBuilder.umUsuario;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -24,52 +26,52 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
 
-    private LocacaoService service;
+  private LocacaoService service;
 
-    @Parameter // Parametros[0]
-    public List<Filme> filmes;
+  @Parameter // Parametros[0]
+  public List<Filme> filmes;
 
-    @Parameter(value = 1) // Parametros[1]
-    public Double valorLocacao;
-    
-    @Parameter(value = 2) // Parametros[1]
-    public String cenario;
+  @Parameter(value = 1) // Parametros[1]
+  public Double valorLocacao;
 
-    @Before
-    public void setup() {
-        service = new LocacaoService();
-    }
+  @Parameter(value = 2) // Parametros[1]
+  public String cenario;
 
-    private static Filme filme1 = new Filme("Filme1", 2, 4.0);
-    private static Filme filme2 = new Filme("Filme2", 2, 4.0);
-    private static Filme filme3 = new Filme("Filme3", 2, 4.0);
-    private static Filme filme4 = new Filme("Filme4", 2, 4.0);
-    private static Filme filme5 = new Filme("Filme5", 2, 4.0);
-    private static Filme filme6 = new Filme("Filme6", 2, 4.0);
-    private static Filme filme7 = new Filme("Filme7", 2, 4.0);
+  @Before
+  public void setup() {
+    service = new LocacaoService();
+  }
 
-    @Parameters(name = "{2}")
-    public static Collection<Object[]> getParametros() {
-        return Arrays.asList(new Object[][]{
-            {Arrays.asList(filme1, filme2), 8.0, "2 Filmes: Sem Desconto"},
-            {Arrays.asList(filme1, filme2, filme3), 11.0, "3 Filmes 25%"},
-            {Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "4 Filmes 50%"},
-            {Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "5 Filmes 75%"},
-            {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "6 Filmes 100%"},
-            {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "7 Filmes: Sem Desconto"}
-        });
-    }
+  private static Filme filme1 = umFilme().agora();
+  private static Filme filme2 = umFilme().agora();
+  private static Filme filme3 = umFilme().agora();
+  private static Filme filme4 = umFilme().agora();
+  private static Filme filme5 = umFilme().agora();
+  private static Filme filme6 = umFilme().agora();
+  private static Filme filme7 = umFilme().agora();
 
-    @Test
-    public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException {
-        // cenario
-        Usuario usuario = new Usuario("Usuario1");
+  @Parameters(name = "{2}")
+  public static Collection<Object[]> getParametros() {
+    return Arrays.asList(new Object[][]{
+      {Arrays.asList(filme1, filme2), 8.0, "2 Filmes: Sem Desconto"},
+      {Arrays.asList(filme1, filme2, filme3), 11.0, "3 Filmes 25%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "4 Filmes 50%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "5 Filmes 75%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "6 Filmes 100%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "7 Filmes: Sem Desconto"}
+    });
+  }
 
-        // acao
-        Locacao locacao = service.alugarFilme(usuario, filmes);
+  @Test
+  public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException {
+    // cenario
+    Usuario usuario = umUsuario().agora();
 
-        // verificacao
-        assertThat(locacao.getValor(), is(valorLocacao));
-    }
+    // acao
+    Locacao locacao = service.alugarFilme(usuario, filmes);
+
+    // verificacao
+    assertThat(locacao.getValor(), is(valorLocacao));
+  }
 
 }
