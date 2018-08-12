@@ -8,8 +8,8 @@ import br.ce.wcaquino.entidades.Locacao;
  */
 public class LocacaoDAOFake implements LocacaoDAO {
 
-  public Locacao salvar(Locacao locacao) {
-    return locacao;
+  public void salvar(Locacao locacao) {
+    // salvando..
   }
 
 }

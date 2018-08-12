@@ -8,6 +8,6 @@ import br.ce.wcaquino.entidades.Locacao;
  */
 public interface LocacaoDAO {
 
-  Locacao salvar(Locacao locacao);
+  void salvar(Locacao locacao);
 
 }
