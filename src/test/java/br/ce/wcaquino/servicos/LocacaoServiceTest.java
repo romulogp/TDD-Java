@@ -2,6 +2,8 @@ package br.ce.wcaquino.servicos;
 
 import static br.ce.wcaquino.builder.FilmeBuilder.umFilme;
 import static br.ce.wcaquino.builder.UsuarioBuilder.umUsuario;
+import br.ce.wcaquino.daos.LocacaoDAO;
+import br.ce.wcaquino.daos.LocacaoDAOFake;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -35,7 +37,9 @@ public class LocacaoServiceTest {
 
   @Before
   public void setup() {
+    LocacaoDAO daoFake = new LocacaoDAOFake();
     service = new LocacaoService();
+    service.setLocacaoDAO(daoFake);
   }
 
   @Before
