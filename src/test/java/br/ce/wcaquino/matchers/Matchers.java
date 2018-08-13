@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 /**
  *
- * @author Rômulo Göelzer Portolann
+ * @author Rï¿½mulo Gï¿½elzer Portolann
  */
 public class Matchers {
 

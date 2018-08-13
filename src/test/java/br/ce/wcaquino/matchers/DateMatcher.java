@@ -7,7 +7,7 @@ import org.hamcrest.TypeSafeMatcher;
 
 /**
  *
- * @author Rômulo Göelzer Portolann
+ * @author Rï¿½mulo Gï¿½elzer Portolann
  */
 public class DateMatcher extends TypeSafeMatcher<Date>{
 

@@ -41,7 +41,7 @@ public class LocacaoService {
     }
 
     if (negativado) {
-      throw new LocadoraException("Usuário Negativado");
+      throw new LocadoraException("Usuï¿½rio Negativado");
     }
 
     Locacao locacao = new Locacao();
@@ -91,6 +91,16 @@ public class LocacaoService {
         emailService.notificarAtraso(locacao.getUsuario());
       }
     }
+  }
+  
+  public void prorrogarLocacao(Locacao locacao, int dias) {
+    Locacao novaLocacao = new Locacao();
+    novaLocacao.setUsuario(locacao.getUsuario());
+    novaLocacao.setFilmes(locacao.getFilmes());
+    novaLocacao.setDataLocacao(new Date());
+    novaLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(dias));
+    novaLocacao.setValor(locacao.getValor() * dias);
+    locacaoDAO.salvar(novaLocacao);
   }
 
 }
