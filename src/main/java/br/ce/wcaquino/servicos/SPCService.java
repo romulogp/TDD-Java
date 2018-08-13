@@ -7,7 +7,7 @@ import br.ce.wcaquino.entidades.Usuario;
  * @author Rômulo Göelzer Portolann
  */
 public interface SPCService {
-  
-  boolean possuiNegaticacao(Usuario usuario);
+
+  boolean possuiNegaticacao(Usuario usuario) throws Exception;
 
 }
