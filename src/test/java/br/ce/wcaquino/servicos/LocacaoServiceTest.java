@@ -9,13 +9,11 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
-import static br.ce.wcaquino.matchers.Matchers.caiEm;
 import static br.ce.wcaquino.matchers.Matchers.caiNumaSegunda;
 import static br.ce.wcaquino.matchers.Matchers.ehHoje;
 import static br.ce.wcaquino.matchers.Matchers.ehHojeComDiferencaDeDias;
 import br.ce.wcaquino.utils.DataUtils;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -23,12 +21,12 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertThat;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,7 +37,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)       // Dizer ao jUnit que a execução será gerenciado pelo PowerMock
+@PrepareForTest({LocacaoService.class, DataUtils.class}) // Classe para execução
 public class LocacaoServiceTest {
 
   private static int testCount = 0;
@@ -77,21 +80,21 @@ public class LocacaoServiceTest {
 
   @Test
   public void deveAlugarFilme() throws Exception {
-
-    // Realiza o teste dinamicamente.
-    Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
     //cenario
     Usuario usuario = umUsuario().agora();
     Filme filme = umFilme().comValor(5.0).agora();
+
+    PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(28, 4, 2017));
 
     //acao
     Locacao locacao = service.alugarFilme(usuario, Arrays.asList(filme));
 
     //verificacao
     error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-    error.checkThat(locacao.getDataLocacao(), ehHoje());
-    error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDeDias(1));
+//    error.checkThat(locacao.getDataLocacao(), ehHoje());
+//    error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDeDias(1));
+    error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), DataUtils.obterData(28, 4, 2017)), is(true));
+    error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterData(29, 4, 2017)), is(true));
   }
 
   @Test(expected = FilmeSemEstoqueException.class)
@@ -132,21 +135,19 @@ public class LocacaoServiceTest {
   }
 
   @Test
-  public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
-
-    // Realiza o teste dinamicamente, ou seja, se o teste deve ou nï¿½o ser ignorado
-    Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-
+  public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException, Exception {
     // cenario
     Usuario usuario = umUsuario().agora();
     List<Filme> filme = Arrays.asList(umFilme().agora());
+
+    PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(29, 4, 2017));
 
     // acao
     Locacao locacao = service.alugarFilme(usuario, filme);
 
     // verificacao
-    assertThat(locacao.getDataRetorno(), caiEm(Calendar.MONDAY));
     assertThat(locacao.getDataRetorno(), caiNumaSegunda());
+    PowerMockito.verifyNew(Date.class).withNoArguments();
   }
 
   @Test
