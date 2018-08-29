@@ -1,7 +1,7 @@
 package br.ce.wcaquino.servicos;
 
-import static br.ce.wcaquino.builder.FilmeBuilder.umFilme;
-import static br.ce.wcaquino.builder.UsuarioBuilder.umUsuario;
+import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
+import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -23,10 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-/**
- *
- * @author Rômulo Göelzer Portolann
- */
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
 
@@ -34,17 +30,18 @@ public class CalculoValorLocacaoTest {
   private LocacaoService service;
 
   @Mock
-  private SPCService spc;
-  @Mock
   private LocacaoDAO dao;
 
-  @Parameter // Parametros[0]
+  @Mock
+  private SPCService spc;
+
+  @Parameter
   public List<Filme> filmes;
 
-  @Parameter(value = 1) // Parametros[1]
+  @Parameter(value = 1)
   public Double valorLocacao;
 
-  @Parameter(value = 2) // Parametros[1]
+  @Parameter(value = 2)
   public String cenario;
 
   @Before
@@ -64,24 +61,23 @@ public class CalculoValorLocacaoTest {
   public static Collection<Object[]> getParametros() {
     return Arrays.asList(new Object[][]{
       {Arrays.asList(filme1, filme2), 8.0, "2 Filmes: Sem Desconto"},
-      {Arrays.asList(filme1, filme2, filme3), 11.0, "3 Filmes 25%"},
-      {Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "4 Filmes 50%"},
-      {Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "5 Filmes 75%"},
-      {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "6 Filmes 100%"},
+      {Arrays.asList(filme1, filme2, filme3), 11.0, "3 Filmes: 25%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "4 Filmes: 50%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "5 Filmes: 75%"},
+      {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "6 Filmes: 100%"},
       {Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "7 Filmes: Sem Desconto"}
     });
   }
 
   @Test
   public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException {
-    // cenario
+    //cenario
     Usuario usuario = umUsuario().agora();
 
-    // acao
-    Locacao locacao = service.alugarFilme(usuario, filmes);
+    //acao
+    Locacao resultado = service.alugarFilme(usuario, filmes);
 
-    // verificacao
-    assertThat(locacao.getValor(), is(valorLocacao));
+    //verificacao
+    assertThat(resultado.getValor(), is(valorLocacao));
   }
-
 }

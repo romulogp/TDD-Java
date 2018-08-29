@@ -9,21 +9,21 @@ import org.hamcrest.TypeSafeMatcher;
  *
  * @author R�mulo G�elzer Portolann
  */
-public class DateMatcher extends TypeSafeMatcher<Date>{
+public class DateMatcher extends TypeSafeMatcher<Date> {
 
-    private final Date data1;
-    
-    public DateMatcher(Date data1) {
-        this.data1 = data1;
-    }
+  private final Date data1;
 
-    @Override
-    protected boolean matchesSafely(Date data2) {
-        return DataUtils.isMesmaData(data1, data2);
-    }
+  public DateMatcher(Date data1) {
+    this.data1 = data1;
+  }
 
-    public void describeTo(Description description) {
-        description.appendText(this.data1.toString());
-    }
+  @Override
+  protected boolean matchesSafely(Date data2) {
+    return DataUtils.isMesmaData(data1, data2);
+  }
+
+  public void describeTo(Description description) {
+    description.appendText(this.data1.toString());
+  }
 
 }

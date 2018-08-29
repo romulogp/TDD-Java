@@ -1,11 +1,7 @@
-package br.ce.wcaquino.builder;
+package br.ce.wcaquino.builders;
 
 import br.ce.wcaquino.entidades.Usuario;
 
-/**
- *
- * @author Rômulo Göelzer Portolann
- */
 public class UsuarioBuilder {
 
   private Usuario usuario;
@@ -28,5 +24,4 @@ public class UsuarioBuilder {
   public Usuario agora() {
     return usuario;
   }
-
 }

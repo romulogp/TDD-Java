@@ -7,15 +7,11 @@ import java.util.Date;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-/**
- *
- * @author Rômulo Göelzer Portolann
- */
 public class DataDiferencaDiasMatcher extends TypeSafeMatcher<Date> {
 
   private Integer qtdDias;
 
-  DataDiferencaDiasMatcher(Integer qtdDias) {
+  public DataDiferencaDiasMatcher(Integer qtdDias) {
     this.qtdDias = qtdDias;
   }
 
@@ -26,8 +22,8 @@ public class DataDiferencaDiasMatcher extends TypeSafeMatcher<Date> {
   }
 
   @Override
-  protected boolean matchesSafely(Date t) {
-    return DataUtils.isMesmaData(t, DataUtils.obterDataComDiferencaDias(qtdDias));
+  protected boolean matchesSafely(Date data) {
+    return DataUtils.isMesmaData(data, DataUtils.obterDataComDiferencaDias(qtdDias));
   }
 
 }

@@ -1,13 +1,12 @@
 package br.ce.wcaquino.entidades;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Locacao {
 
   private Usuario usuario;
-  private List<Filme> filmes = new ArrayList<Filme>();
+  private List<Filme> filmes;
   private Date dataLocacao;
   private Date dataRetorno;
   private Double valor;

@@ -7,28 +7,24 @@ import java.util.Locale;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-/**
- *
- * @author Rômulo Göelzer Portolann
- */
-public class DiaSemanaMatcher extends TypeSafeMatcher<Date>{
+public class DiaSemanaMatcher extends TypeSafeMatcher<Date> {
 
-    private final Integer diaSemana;
-    
-    public DiaSemanaMatcher(Integer diaSemana) {
-        this.diaSemana = diaSemana;
-    }
+  private Integer diaSemana;
 
-    @Override
-    protected boolean matchesSafely(Date data) {
-        return DataUtils.verificarDiaSemana(data, diaSemana);
-    }
+  public DiaSemanaMatcher(Integer diaSemana) {
+    this.diaSemana = diaSemana;
+  }
 
-    public void describeTo(Description description) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_WEEK, diaSemana);
-        String dataExtenso = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, new Locale("pt", "BR"));
-        description.appendText(dataExtenso);
-    }
+  public void describeTo(Description desc) {
+    Calendar data = Calendar.getInstance();
+    data.set(Calendar.DAY_OF_WEEK, diaSemana);
+    String dataExtenso = data.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, new Locale("pt", "BR"));
+    desc.appendText(dataExtenso);
+  }
+
+  @Override
+  protected boolean matchesSafely(Date data) {
+    return DataUtils.verificarDiaSemana(data, diaSemana);
+  }
 
 }

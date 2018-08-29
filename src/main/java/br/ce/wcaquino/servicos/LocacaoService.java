@@ -14,7 +14,7 @@ import java.util.List;
 
 public class LocacaoService {
 
-  private LocacaoDAO locacaoDAO;
+  private LocacaoDAO dao;
   private SPCService spcService;
   private EmailService emailService;
 
@@ -35,36 +35,35 @@ public class LocacaoService {
 
     boolean negativado;
     try {
-      negativado = spcService.possuiNegaticacao(usuario);
-    } catch (Exception ex) {
+      negativado = spcService.possuiNegativacao(usuario);
+    } catch (Exception e) {
       throw new LocadoraException("Problemas com SPC, tente novamente");
     }
 
     if (negativado) {
-      throw new LocadoraException("Usu�rio Negativado");
+      throw new LocadoraException("Usuário Negativado");
     }
 
     Locacao locacao = new Locacao();
     locacao.setFilmes(filmes);
     locacao.setUsuario(usuario);
-    locacao.setDataLocacao(new Date());
-    Double valorTotal = 0.0;
+    locacao.setDataLocacao(Calendar.getInstance().getTime());
+    Double valorTotal = 0d;
     for (int i = 0; i < filmes.size(); i++) {
       Filme filme = filmes.get(i);
-      double valorFilme = filme.getPrecoLocacao();
+      Double valorFilme = filme.getPrecoLocacao();
       switch (i) {
         case 2:
-          valorFilme = valorFilme * .75;
+          valorFilme = valorFilme * 0.75;
           break;
         case 3:
-          valorFilme = valorFilme * .50;
+          valorFilme = valorFilme * 0.5;
           break;
         case 4:
-          valorFilme = valorFilme * .25;
+          valorFilme = valorFilme * 0.25;
           break;
         case 5:
-          valorFilme = 0;
-        default:
+          valorFilme = 0d;
           break;
       }
       valorTotal += valorFilme;
@@ -72,27 +71,28 @@ public class LocacaoService {
     locacao.setValor(valorTotal);
 
     //Entrega no dia seguinte
-    Date dataEntrega = adicionarDias(new Date(), 1);
+    Date dataEntrega = Calendar.getInstance().getTime();
+    dataEntrega = adicionarDias(dataEntrega, 1);
     if (DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
       dataEntrega = adicionarDias(dataEntrega, 1);
     }
     locacao.setDataRetorno(dataEntrega);
 
     //Salvando a locacao...	
-    locacaoDAO.salvar(locacao);
+    dao.salvar(locacao);
 
     return locacao;
   }
 
   public void notificarAtrasos() {
-    List<Locacao> locacoes = locacaoDAO.obterLocacoesPendentes();
+    List<Locacao> locacoes = dao.obterLocacoesPendentes();
     for (Locacao locacao : locacoes) {
       if (locacao.getDataRetorno().before(new Date())) {
         emailService.notificarAtraso(locacao.getUsuario());
       }
     }
   }
-  
+
   public void prorrogarLocacao(Locacao locacao, int dias) {
     Locacao novaLocacao = new Locacao();
     novaLocacao.setUsuario(locacao.getUsuario());
@@ -100,7 +100,6 @@ public class LocacaoService {
     novaLocacao.setDataLocacao(new Date());
     novaLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(dias));
     novaLocacao.setValor(locacao.getValor() * dias);
-    locacaoDAO.salvar(novaLocacao);
+    dao.salvar(novaLocacao);
   }
-
 }
